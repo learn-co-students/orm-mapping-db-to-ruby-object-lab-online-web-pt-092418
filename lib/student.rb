@@ -55,15 +55,37 @@ SQL
     end
   end
   
-  def self.first_X_students_in_grade_10(grade)
+  def self.first_X_students_in_grade_10(number_of_students)
     sql =<<SQL
     SELECT *
     FROM students
     WHERE grade = 10
+    LIMIT ?
 SQL
-    DB[:conn].execute(sql).map.first do |row|
+    DB[:conn].execute(sql, number_of_students)
+  
+  end
+  
+  def self.first_student_in_grade_10
+    sql=<<SQL
+    SELECT *
+    FROM students
+    WHERE grade = 10
+SQL
+    DB[:conn].execute(sql).map do |row|
       self.new_from_db(row)
-    end
+    end.first
+  end
+  
+  def self.all_students_in_grade_X(grade_X)
+    sql=<<SQL
+    SELECT *
+    FROM students 
+    WHERE grade = ? 
+SQL
+  DB[:conn].execute(sql, grade_X).map do |row|
+    self.new_from_db(row)
+  end
   end
   
   def save
